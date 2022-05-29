@@ -1,14 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { ratingMap, giphy_url } from "../utils/constants";
 
 function RandomGif(props) {
-  const firstRenderRef = useRef(true);
   // const [searchVal, setSearchVal] = useState("");
   const [randomGif, setRandomGif] = useState({});
   const [gifs, setGifs] = useState([]);
   const [showRandomGif, setShowRandomGif] = useState(true);
-  const [isLoading, setIsLoading] = useState(false);
+  // const [isLoading, setIsLoading] = useState(false);
 
   const getrandomGif = async () => {
     const response = await fetch(
@@ -40,6 +39,7 @@ function RandomGif(props) {
   }, [showRandomGif]);
 
   const handleSearch = (e) => {
+    setShowRandomGif(false);
     props.setSearchVal(e.target.value);
 
     if (e.target.value.length < 2) {
@@ -79,7 +79,13 @@ function RandomGif(props) {
             className="searchbar input-field"
           />
           {props.searchVal.length >= 2 && (
-            <i className="fa fa-close icon2" onClick={cancelSearch}></i>
+            <i
+              className="fa fa-close icon2"
+              onClick={() => {
+                props.setSearchVal("");
+                setGifs([]);
+              }}
+            ></i>
           )}
           {props.searchVal.length >= 2 && (
             <button onClick={cancelSearch} className="cancelbtn">
@@ -90,7 +96,7 @@ function RandomGif(props) {
       </div>
 
       <div className="randomGif">
-        {gifs.length < 1 ? (
+        {showRandomGif && (
           <div className="animatedGif">
             <h1>Randomly Selected Gif</h1>
             <img
@@ -138,28 +144,33 @@ function RandomGif(props) {
               ></div>
             </div>
           </div>
-        ) : (
-          <div className="conatinerGif">
-            {gifs.map((gif, i) => (
-              <div className="gifContainerInside" key={i}>
-                <Link to={`/gif/${gif.id}`}>
-                  <img
-                    src={gif.images.fixed_width_still.url}
-                    key={gif.images.fixed_width_still.url}
-                    className="img"
-                  />
-                  <h3 className="title">
-                    {gif.title ? gif.title : "No title for this Gif"}
-                  </h3>
-                  {/* <a href={gif.bitly_gif_url} target="_blank">
+        )}
+        {gifs.length > 0 && (
+          <div>
+            {gifs.length > 0 && <h3>Seach Results</h3>}
+
+            <div className="conatinerGif">
+              {gifs.map((gif, i) => (
+                <div className="gifContainerInside" key={i}>
+                  <Link to={`/gif/${gif.id}`}>
+                    <img
+                      src={gif.images.fixed_width_still.url}
+                      key={gif.images.fixed_width_still.url}
+                      className="img"
+                    />
+                    <h3 className="title">
+                      {gif.title ? gif.title : "No title for this Gif"}
+                    </h3>
+                    {/* <a href={gif.bitly_gif_url} target="_blank">
                   Click here for Gif
                 </a>
                 <div className="rating">
                   <h4>{ratingMap[gif.rating]}</h4>
                 </div> */}
-                </Link>
-              </div>
-            ))}
+                  </Link>
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>
