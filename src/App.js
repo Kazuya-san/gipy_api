@@ -1,25 +1,30 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from "react";
+import RandomGif from "./components/RandomGif";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 
-function App() {
+import "./App.css";
+import SingleGif from "./components/SingleGif";
+
+const App = () => {
+  const [searchVal, setSearchVal] = useState("");
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <h1 style={{ textAlign: "center" }}>Giphy Search</h1>
+      <BrowserRouter>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <RandomGif searchVal={searchVal} setSearchVal={setSearchVal} />
+            }
+          />
+          <Route path="/gif/:id" element={<SingleGif />} />
+        </Routes>
+      </BrowserRouter>
+    </>
   );
-}
+};
 
 export default App;
